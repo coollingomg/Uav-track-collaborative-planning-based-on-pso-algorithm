@@ -47,13 +47,16 @@ $$\mu_{\min}\leq\arctan\biggl[\frac{\left|z_i-z_{i-1}\right|}{\sqrt{\left(x_i-x_
 <center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="./pic/1.png#pic_center">
+    src="./pic/1.png">
     <br>
     <div style="color:orange; border-bottom: 1px solid #d9d9d9;
     display: inline-block;
     color: #999;
     padding: 2px;">图1&emsp;到达时间交集</div>
 </center>
+<p align="center">
+  <img src="./pic/1.png" alt="Sublime's custom image"/>
+</p>
 
 &emsp;&emsp;设第 $i$ 架无人机的速度为 $v_{i}\in\left[v_{min},v_{max}\right]$ ，每架无人机均提前生成 $k$ 条备选航迹，第$j$条备选航迹的长度记作 $l_{i,j}$ ，则第 $i$ 架无人机到达目标点的时间区间为$AT_{i,j}=\begin{bmatrix}l_{i,j}/\nu_{max},l_{i,j}/\nu_{min}\end{bmatrix}$，到达目标点的总时间区间为：<br/>
 $$AT_{i,j}=AT_{i,1}\cup AT_{i,2}\cup\cdots\cup AT_{i,k} \tag{8}$$
