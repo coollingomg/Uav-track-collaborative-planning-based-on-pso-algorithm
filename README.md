@@ -19,7 +19,15 @@ $$J_{i,1}=\sum_{j=1}^n\left|\left|P_{i,j},P_{i,j+1}\right|\right|,j=1,2,\ldots,n
 &emsp;&emsp;除了航迹长度最优之外，规划的轨迹还须要确保无人机飞行过程中的安全。在作战空间中，存在威胁区域，这些区域会损伤无人机，使得无人机不能有效打击敌方目标点。<br/>
 &emsp;&emsp;考虑到威胁区建模的复杂性和获取真实数据的困难性，本文对威胁环境进行了抽象化处理，将威胁区域抽象为一个半径为定值的圆柱体，威胁区域的作用半径等同于圆柱体的半径。假设有 $M$ 个威胁区，为使无人机能成功避开威胁区域以实现对敌的有效打击，定义如下威胁代价：<br/>
 
-$$\begin{cases}J_{i,2}=\sum_{j=1}^n\sum_{m=1}^MT_m\big(P_{i,j}\big)\\d_m=\left\|P_{i,j},Rhreat_m\right\|\\T_m\big(P_{i,j}\big)=\begin{cases}0,d_m>D+R_m\\\infty,d_m\leq D+R_m\end{cases}\\j=1,2,\ldots,n;m=1,2,\ldots,M\end{cases} \tag{2}$$
+$$
+\begin{cases}
+J_{i,2}=\sum_{j=1}^{n}\sum_{m=1}^{M}T_m\big(P_{i,j}\big)\\
+d_m=\left\|P_{i,j},Rhreat_m\right\|\\
+T_m\big(P_{i,j}\big)=\begin{cases}
+0,d_m>D+R_m\\
+\infty,d_m\leq D+R_m\end{cases}\\
+j=1,2,\ldots,n;m=1,2,\ldots,M
+\end{cases} \tag{2}$$
 
 &emsp;&emsp;当无人机在威胁区以外飞行时，其威胁代价为零；当无人机进入威胁区域时，无人机具有很大的毁坏可能性，此时设定该路径的威胁代价为无穷。<br/>
 &emsp;&emsp;（3）飞行高度代价<br/>
@@ -41,7 +49,7 @@ $$minJ_i=\alpha_1J_{i,1}+\alpha_2J_{i,2}+\alpha_3J_{i,3} \tag{4}$$
 
 $$h_{\min}\leq z_{i}\leq h_{\max} \tag{5}$$
 
-其中， $h_{\min}$ 为最低飞行高度，$h_{\max}$ 为最高飞行高度。<br/>
+其中， $h_{\min}$ 为最低飞行高度， $h_{\max}$ 为最高飞行高度。<br/>
 &emsp;&emsp;（2）偏航转角约束<br/>
 &emsp;&emsp;受无人机自身机械性能的限制，其偏航转角应在自身允许的最大范围内：
 
