@@ -53,7 +53,12 @@ $$h_{\min}\leq z_{i}\leq h_{\max} \tag{5}$$
 &emsp;&emsp;（2）偏航转角约束<br/>
 &emsp;&emsp;受无人机自身机械性能的限制，其偏航转角应在自身允许的最大范围内：
 
-$$\begin{aligned} &\beta_{\min}\leq arccos\biggl\lfloor\frac{f_{1}}{f_{2}}\biggr\rfloor\leq\beta_{\max} \\ &f_{1}=(x_{i}-x_{i-1})(x_{i+1}-x_{i})+(y_{i}-y_{i-1})(y_{i+1}-y_{i}) \\ &f_{2}=\sqrt{\left(x_{i}-x_{i-1}\right)^{2}+\left(y_{i}-y_{i-1}\right)^{2}}\cdot\sqrt{\left(x_{i}-x_{i+1}\right)^{2}+\left(y_{i}-y_{i+1}\right)^{2}} \end{aligned} \tag{6}$$
+$$
+\begin{matrix}
+\beta_{\min}\leq arccos\biggl\lfloor\frac{f_{1}}{f_{2}}\biggr\rfloor\leq\beta_{\max} \\
+f_{1}=(x_{i}-x_{i-1})(x_{i+1}-x_{i})+(y_{i}-y_{i-1})(y_{i+1}-y_{i}) \\
+f_{2}=\sqrt{\left(x_{i}-x_{i-1}\right)^{2}+\left(y_{i}-y_{i-1}\right)^{2}}\cdot\sqrt{\left(x_{i}-x_{i+1}\right)^{2}+\left(y_{i}-y_{i+1}\right)^{2}} 
+\end{matrix} \tag{6}$$
 
 其中， $\beta_{\min}$ 为最小偏航转角， $\beta_{\max}$ 为最大偏航转角。<br/>
 &emsp;&emsp;（3）俯仰转角约束<br/>
@@ -66,21 +71,15 @@ $$\mu_{\min}\leq\arctan\biggl[\frac{\left|z_i-z_{i-1}\right|}{\sqrt{\left(x_i-x_
 &emsp;&emsp;（1）时间协同约束<br/>
 &emsp;&emsp;时间协同约束具体是指在无人机集群航迹规划过程中，为实现对敌的饱和打击，合理协调每架无人机在任务周期内的飞行时间，以实现无人机同时到达目标点对敌方进行打击，因此需要对无人机的到达时间（Arrival Time, AT）进行约束。<br/>
 &emsp;&emsp;以三架无人机为例，如图1所示，红色线条之间的部分即为无人机到达目标的时间交集AT。<br/>
-<center>
+
+<p align="center">
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="./pic/1.png">
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图1&emsp;到达时间交集</div>
-</center>
-<p align="center">
-  <img src="./pic/1.png" alt="Sublime's custom image"/>
+    <p align="center">图1&emsp;到达时间交集</p>
 </p>
 
-&emsp;&emsp;设第 $i$ 架无人机的速度为 $v_{i}\in\left[v_{min},v_{max}\right]$ ，每架无人机均提前生成 $k$ 条备选航迹，第$j$条备选航迹的长度记作 $l_{i,j}$ ，则第 $i$ 架无人机到达目标点的时间区间为$AT_{i,j}=\begin{bmatrix}l_{i,j}/\nu_{max},l_{i,j}/\nu_{min}\end{bmatrix}$，到达目标点的总时间区间为：<br/>
+&emsp;&emsp;设第 $i$ 架无人机的速度为 $v_{i}\in\left[v_{min},v_{max}\right]$ ，每架无人机均提前生成 $k$ 条备选航迹，第 $j$ 条备选航迹的长度记作 $l_{i,j}$ ，则第 $i$ 架无人机到达目标点的时间区间为 $AT_{i,j}=\[ l_{i,j}/\nu_{max},l_{i,j}/\nu_{min} \]$ ，到达目标点的总时间区间为：<br/>
 
 $$AT_{i,j}=AT_{i,1}\cup AT_{i,2}\cup\cdots\cup AT_{i,k} \tag{8}$$
 
@@ -95,7 +94,7 @@ C_t=\begin{cases}
 \end{cases}
 \end{matrix} \tag{9}$$
 
-其中， $uav\_num$ 为无人机数量。<br/>
+其中， $uav\\_num$ 为无人机数量。<br/>
 &emsp;&emsp;（2）空间协同约束<br/>
 &emsp;&emsp;在无人机集群飞行的过程中，需考虑各无人机之间的通信交互，任意两机间需满足设置的通信范围。且出于安全的考虑，必须考虑各无人机之间实时的最小距离。因此，设置两机间能够通信的最大通信距离和最小防碰撞距离约束。<br/>
 
@@ -114,12 +113,24 @@ C_{s}=\begin{cases}
 &emsp;&emsp;粒子群算法（Particle Swarm Optimization，PSO）作为一种高效的全局寻优算法，已广泛应用于各类实际问题中。PSO的概念源自于模拟鸟群在特定区域内寻找食物的行为，PSO将优化问题抽象为一种群体智能行为，假设在特定区域内存在食物，而群体中的个体并不知道食物的确切位置，个体之间可以进行信息交流，根据自身的适应度评价来感知自身与食物位置的距离，并通过搜寻当前区域内适应值最高的个体周围来寻找食物。<br/>
 &emsp;&emsp;粒子群优化算法中，每个粒子代表一个解，在 $D$ 维搜索空间中，第 $i$ 个粒子位置向量为 $x_{i}=(x_{i1},x_{i2},\ldots,x_{iD})$ ，第 $i$ 个粒子速度向量为 $v_{i}=(v_{il},v_{i2},\ldots,v_{iD})$ ，经过 $t+1$ 次迭代后，粒子 $x_{i}$ 历史最佳位置为 $p_{i,best}^{t}$ ,种群全局最佳位置为 $g_{best}^{t}$ 。具体的更新方式为：<br/>
 
-$$\begin{aligned}&\begin{cases}v_{i}^{t+l}=\omega\cdot v_{i}^{t}+c_{1}r_{1}\Big(p_{i,best}-x_{i}\Big)+c_{2}r_{2}\Big(g_{best}-x_{i}\Big)\\\omega=\omega_{max}-t\cdot\Bigg(\frac{\omega_{max}-\omega_{min}}{t_{max}}\Bigg)\\x_{i}^{t+1}=x_{i}^{t}+v_{i}^{t+l}\end{cases}\\&i=1,2,\ldots,M;t\leq t_{\max}-1\end{aligned} \tag{11}$$
+$$
+\begin{matrix}
+\begin{cases}
+v_{i}^{t+l}=\omega\cdot v_{i}^{t}+c_{1}r_{1}\Big(p_{i,best}-x_{i}\Big)+c_{2}r_{2}\Big(g_{best}-x_{i}\Big)\\
+\omega=\omega_{max}-t\cdot\Bigg(\frac{\omega_{max}-\omega_{min}}{t_{max}}\Bigg)\\
+x_{i}^{t+1}=x_{i}^{t}+v_{i}^{t+l}\end{cases}\\
+i=1,2,\ldots,M;t\leq t_{\max}-1
+\end{matrix} \tag{11}$$
 
 其中， $\omega$ 为惯性权重，是一个线性下降的非负数，当 $\omega$ 较大时，全局搜索能力较强；当 $\omega$ 较小时，局部寻优能力较强。 $\omega_{max}$ 是初始惯性权重， $\omega_{min}$ 是迭代至最大时的惯性权重，一般设置为 $\omega_{max}=0.9,\omega_{min}=0.4$；$c_{1}$ 和 $c_{2}$ 分别是自身学习因子和全局学习因子， $r_{1}$ 和 $r_{2}$ 是 $\text{(0,1)}$ 区间内的随机数且均匀分布， $M$ 是种群规模（即种群中包含的粒子数）， $D$ 是粒子的维数， $t_{max}$ 是粒子的最大迭代次数。<br/>
-&emsp;&emsp;解空间是有边界的，因此粒子的位置和速度都只能在一定范围内，当粒子的速度和位置超出边界时，速度和位置进行限制：<br/>
+&emsp;&emsp;解空间是有边界的，因此粒子的位置和速度都只能在一定范围内，当粒子的速度和位置超出边界时，速度和位置进行限制：
 
-$$\begin{cases}if(\nu_i>\nu_{\max}),\nu_i=\nu_{\max}\\if(\nu_i<\nu_{\min}),\nu_i=\nu_{\min}\\if(x_i>x_{\max}),x_i=x_{\max}\\if(x_i<x_{\min}),x_i=x_{\min}\end{cases} \tag{12}$$
+$$
+\begin{cases}
+\text{if}\left(\nu_i>\nu_{max}\right),\nu_i=\nu_{max} \\
+\text{if}\left(\nu_i<\nu_{min}\right),\nu_i=\nu_{min} \\
+\text{if}\left(x_i>x_{max}\right),x_i=x_{max} \\
+\text{if}\left(x_i<x_{min}\right),x_i=x_{min}\end{cases} \tag{12}$$
 
 &emsp;&emsp;PSO算法在解决一些复杂优化问题时，也会像其它算法一样，存在难以摆脱局部最优、执行效率低、全局搜索能力和局部搜索能力难以平衡等缺陷。<br/>
 &emsp;&emsp;为解决这些问题，本文引入动态多种群粒子群算法，即将整个种群分为多个子种群，然后通过设计子种群间的信息交互机制来使多个子种群能在并行化执行的同时使算法的性能得到提升，这种并行化策略又称为多种群策略。
