@@ -123,14 +123,15 @@ i=1,2,\ldots,M;t\leq t_{\max}-1
 \end{matrix} \tag{11}$$
 
 其中， $\omega$ 为惯性权重，是一个线性下降的非负数，当 $\omega$ 较大时，全局搜索能力较强；当 $\omega$ 较小时，局部寻优能力较强。 $\omega_{max}$ 是初始惯性权重， $\omega_{min}$ 是迭代至最大时的惯性权重，一般设置为 $\omega_{max}=0.9,\omega_{min}=0.4$；$c_{1}$ 和 $c_{2}$ 分别是自身学习因子和全局学习因子， $r_{1}$ 和 $r_{2}$ 是 $\text{(0,1)}$ 区间内的随机数且均匀分布， $M$ 是种群规模（即种群中包含的粒子数）， $D$ 是粒子的维数， $t_{max}$ 是粒子的最大迭代次数。<br/>
-&emsp;&emsp;解空间是有边界的，因此粒子的位置和速度都只能在一定范围内，当粒子的速度和位置超出边界时，速度和位置进行限制：
+&emsp;&emsp;解空间是有边界的，因此粒子的位置和速度都只能在一定范围内，当粒子的速度和位置超出边界时，速度和位置进行限制：<br/>
 
 $$
 \begin{cases}
-\text{if}\left(\nu_i>\nu_{max}\right),\nu_i=\nu_{max} \\
-\text{if}\left(\nu_i<\nu_{min}\right),\nu_i=\nu_{min} \\
-\text{if}\left(x_i>x_{max}\right),x_i=x_{max} \\
-\text{if}\left(x_i<x_{min}\right),x_i=x_{min}\end{cases} \tag{12}$$
+\text{if}\left(\nu_i > \nu_{max}\right),\nu_i=\nu_{max} \\
+\text{if}\left(\nu_i < \nu_{min}\right),\nu_i=\nu_{min} \\
+\text{if}\left(x_i > x_{max}\right),x_i=x_{max} \\
+\text{if}\left( x_{i} < x_{min} \right),x_i=x_{min}
+\end{cases} \tag{12}$$
 
 &emsp;&emsp;PSO算法在解决一些复杂优化问题时，也会像其它算法一样，存在难以摆脱局部最优、执行效率低、全局搜索能力和局部搜索能力难以平衡等缺陷。<br/>
 &emsp;&emsp;为解决这些问题，本文引入动态多种群粒子群算法，即将整个种群分为多个子种群，然后通过设计子种群间的信息交互机制来使多个子种群能在并行化执行的同时使算法的性能得到提升，这种并行化策略又称为多种群策略。
@@ -140,44 +141,53 @@ $$
 #### 3.2.1&emsp;优势群粒子更新策略
 &emsp;&emsp;粒子群算法在优化后期收敛速度变缓的主要原因是其难以摆脱当前局部极值，导致精度下降。为增强优势群跳出局部最优的能力，引入莱维飞行。莱维飞行以大小步间隔形式进行，可以增强粒子活性及跳跃能力，扩大搜索范围，提升多样性，避免陷入局部最优。更新公式如下：<br/>
 
-$$\begin{aligned}&x_{g}^{l}(t)=x_{g}(t)+\alpha\otimes Levy(\lambda)\\&Levy(\lambda)=\frac{\mu}{|\upsilon|^{\frac{1}{\chi}}}\end{aligned} \tag{13}$$
+$$\begin{matrix}
+x_{g}^{l}(t)=x_{g}(t)+\alpha\otimes Levy(\lambda)\\
+Levy(\lambda)=\frac{\mu}{|\upsilon|^{\frac{1}{\chi}}}
+\end{matrix} \tag{13}$$
 
 其中， $x_{g}(t)$ 和 $x_{g}^{l}(t)$ 分别为第 $t$ 次迭代时，经莱维飞行更新前后的粒子位置， $\alpha$ 为步长控制因子，一般取0.01，用大小步长飞向原本小概率探索区域，使得搜索区域更加均匀。 $Levy(\lambda)$ 为随机搜索路径， $\otimes$ 代表点乘。<br/>
 &emsp;&emsp;莱维飞行有助于粒子摆脱局部最优，但更新位置可能并不更优。本文引入贪婪算法评价策略，仅在更新位置更优时更新，否则保留原位置。实现过程如下：<br/>
 
-$$x_g^{new}(t)=\begin{cases}x_g^l(t),f\Big(x_g^l(t)\Big)\leq f\Big(x_g(t)\Big)\\x_g(t),f\Big(x_g^l(t)\Big)>f\Big(x_g(t)\Big)\end{cases} \tag{14}$$
+$$x_g^{new}(t)=\begin{cases}
+x_g^l(t),f\Big(x_g^l(t)\Big)\leq f\Big(x_g(t)\Big)\\
+x_g(t),f\Big(x_g^l(t)\Big)>f\Big(x_g(t)\Big)
+\end{cases} \tag{14}$$
 
 其中， $x_g^{new}(t)$ 为贪婪算法更新后的粒子位置， $f(x)$ 代表粒子适应度函数。
 #### 3.2.2&emsp;劣势群粒子更新策略
 &emsp;&emsp;在“劣势群”的更新中，引入组合粒子的概念变更传统速度更新的公式，组合粒子记为 $p_{mix}(t)$ ， $p_{mix}(t)$ 的维度值由各粒子历史最优值随机组合而成，如图2所示。由此得到的劣势群位置和速度更新方式为：<br/>
 
-$$\begin{cases}v_i^{t+l}=\omega\cdot v_i^t+c_1r_1\big(p_{i,best}-x_i\big)+c_2r_2\big(g_{best}-x_i\big)+c_3r_3\big(p_{mix}-x_i\big)\\x_i^{t+1}=x_i^t+v_i^{t+l}\end{cases} \tag{15}$$
+$$\begin{cases}
+v_i^{t+l}=\omega\cdot v_i^t+c_1r_1\big(p_{i,best}-x_i\big)+c_2r_2\big(g_{best}-x_i\big)+c_3r_3\big(p_{mix}-x_i\big)\\
+x_i^{t+1}=x_i^t+v_i^{t+l}
+\end{cases} \tag{15}$$
 
 其中， $c_{3}$ 中为混合学习因子， $r_{3}$ 为 $(0,1)$ 随机数。由式可知，组合粒子由当前个体最优粒子组合而成，既继承了各粒子的优良维度，同时具有随机性，兼顾了粒子多样性和优异性。<br/>
 &emsp;&emsp;在“劣势群”中，由于具有保留价值的粒子信息相对较少，种群远离问题的优质解。因此，在更新完成后，本文还引入了高斯变异机制。这种变异机制能够在整个搜索空间中广泛探索各种可能的解区域，从而有效避免过早收敛的情况发生，并进一步增强子种群的多样性。具体的变异过程如下式所示：<br/>
 
-$$\begin{aligned}&if\quad r>\frac{l}{2}\Bigg[1+\arctan\Bigg(\frac{t}{t_{\max}}\Bigg)\times\frac{4}{\pi}\Bigg]:\\&x^{new}=x\times\left(l+N(0,l)\right)\end{aligned} \tag{16}$$
+$$\begin{matrix}
+if\quad r>\frac{l}{2}\Bigg[1+\arctan\Bigg(\frac{t}{t_{\max}}\Bigg)\times\frac{4}{\pi}\Bigg]:\\
+x^{new}=x\times\left(l+N(0,l)\right)
+\end{matrix} \tag{16}$$
 
 其中， $r$ 和 $N(0,1)$ 是之间的随机数， $x$ 为粒子的位置， $x^{new}$ 为变异后的粒子的位置。<br/>
-<center>
+
+<p align="center">
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="./pic/2.png#pic_center">
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图2&emsp;组合粒子原理</div>
-</center>
+    src="./pic/2.png">
+    <p align="center">图2&emsp;组合粒子原理</p>
+</p>
 
 &emsp;&emsp;通过变异公式可得，当第一个式子成立时，才根据第二式对粒子进行高斯变异操作。随着迭代次数的增加，第一个式子成立的可能性逐渐降低，粒子发生变异的概率也逐步减少。变异操作可在初始阶段使粒子以较大概率发生变异,扩大粒子在解空间中的搜寻范围,保证了粒子群的多样性。
 #### 3.2.3&emsp;混合群粒子更新策略
 &emsp;&emsp;混合群介于优势群和劣势群之间。由于个体间的差异在算法前期较大，混合群在早期侧重于其认知部分，可以实现多方交流；而在后期，则加强全局极值的引领力，促使粒子向最优解的周围聚集。因此，学习因子引入了余弦和正弦函数，使得自身学习因子单调递减，种群学习因子单调递增。混合群的速度更新公式为：<br/>
 
-$$\begin{aligned}
-&\nu_{i}^{t+1}=\omega\cdot\nu_{i}^{t}+2cos\biggl(\frac{\pi t}{2t_{\mathrm{max}}}\biggr)r_{1}\bigl(p_{i,best}-x_{i}\bigr)+2sin\biggl(\frac{\pi t}{2t_{\mathrm{max}}}\biggr)r_{2}\bigl(g_{best}-x_{i}\bigr) \\
-&\omega=\omega_{min}+(\omega_{max}-\omega_{min})\mathrm{cos}\biggl(\frac{\pi t}{t_{max}}\biggr)
-\end{aligned} \tag{17}$$
+$$\begin{matrix}
+\nu_{i}^{t+1}=\omega\cdot\nu_{i}^{t}+2cos\biggl(\frac{\pi t}{2t_{\mathrm{max}}}\biggr)r_{1}\bigl(p_{i,best}-x_{i}\bigr)+2sin\biggl(\frac{\pi t}{2t_{\mathrm{max}}}\biggr)r_{2}\bigl(g_{best}-x_{i}\bigr) \\
+\omega=\omega_{min}+(\omega_{max}-\omega_{min})\mathrm{cos}\biggl(\frac{\pi t}{t_{max}}\biggr)
+\end{matrix} \tag{17}$$
 
 &emsp;&emsp;由于惯性权重因子对PSO算法性能有影响，其值较大时利于全局搜索，较小值时利于加快收敛速度，注重局部开发。因此，在搜索初期设置较大权重因子以提升全局搜索能力；在搜索后期，减小权重因子以增强局部开发能力。通过非线性惯性权重平衡种群局部和全局勘探能力。
 ### 3.3&emsp;基于动态多种群粒子群算法求解航迹规划流程
@@ -188,16 +198,13 @@ $$\begin{aligned}
 &emsp;&emsp;5）合并和群。将各个子种群进行合并，重新形成新的粒子群。<br/>
 &emsp;&emsp;6）判断终止条件。检查是否达到了预设的最大迭代次数或算法精度要求。如果没有达到，返回步骤3），继续迭代。如果达到，则输出当前找到的最优解。<br/>
 &emsp;&emsp;算法流程图见图3所示。<br/>
-<center>
+
+<p align="center">
     <img style="border-radius: 0.3125em;
-    box-shadow: 0 3px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="./pic/3.png#pic_center" width="500" height="300">
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图3&emsp;动态多种群粒子群算法流程图</div>
-</center>
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./pic/3.png">
+    <p align="center">图3&emsp;动态多种群粒子群算法流程图</p>
+</p>
 
 #### 3.3.1&emsp;航迹平滑
 &emsp;&emsp;通过改进的粒子群优化算法对航迹规划模型进行求解，求解结果是一系列满足各种约束的航迹点 $\\{S_i,P_{i,1},\ldots,P_{i,n},E_i\\}$ 。将所有航迹点依次连接可以得到无人机的初始航迹。然而，生成的初始航迹通常是一条连续的折线，并不是平滑的飞行路线。因此，需要对路径进行平滑处理。为优化无人机的飞行航迹，本文利用三次样条插值对初始航迹进行平滑处理。关于三次样条的具体原理本文不过多介绍。<br/>
@@ -231,236 +238,228 @@ Z\\_seq=spline(linspace(0,1000,k),z\\_seq,linspace(0,1000,1000))\end{cases} \\
 &emsp;&emsp;5）根据确定的到达时间（AT），计算每架无人机需要的飞行速度。<br/>
 &emsp;&emsp;6）将计算出的飞行速度分配给每架无人机。<br/>
 &emsp;&emsp;协同规划流程如图4所示。<br/>
-<center>
+
+<p align="center">
     <img style="border-radius: 0.3125em;
-    box-shadow: 0 3px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="./pic/4.png">
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图4&emsp;无人机集群协同航迹规划流程图</div>
-</center>
+    <p align="center">图4&emsp;无人机集群协同航迹规划流程图</p>
+</p>
 
 #### 3.4.3&emsp;基于动态多种群粒子群算法的无人机集群协同航迹规划总体框架
 &emsp;综上所述，基于动态多种群粒子群算法（IDM-PSO）的无人机集群协同航迹规划方法框架如图5所示。<br/>
-<center>
+
+<p align="center">
     <img style="border-radius: 0.3125em;
-    box-shadow: 0 3px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="./pic/5.png">
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图5&emsp;无人机集群协同航迹规划整体框架</div>
-</center>
+    <p align="center">图5&emsp;无人机集群协同航迹规划整体框架</p>
+</p>
 
 ## 4&emsp;仿真验证
 &emsp;&emsp;本节通过单无人机航迹规划和五架无人机协同航迹规划两个案例对3节提出的基于动态多种群粒子群算法航迹规划进行仿真验证。仿真环境为Matlab R2022b，所用笔记本配置为Intel i7-1065G7 3.9GHz CPU处理器，16GB RAM。<br/>
-&emsp;&emsp;在所有仿真中，设置空间范围为 $120km*120km*1000m$ 。无人机集群的最大通信距离和最小安全距离分别为 $Ds=100m,Dc=250km$ 。
+&emsp;&emsp;在所有仿真中，设置空间范围为 $120km * 120km * 1000m$ 。无人机集群的最大通信距离和最小安全距离分别为 $Ds=100m,Dc=250km$ 。
 ### 4.1&emsp;案例1：单无人机三个威胁区航迹规划
 &emsp;&emsp;无人机由当前初始位置协同，避过三个威胁区，到达目标点对敌进行打击，其初始位置及终端时刻坐标见表1，威胁区信息见表2。<br/>
-<center>
-    <capital>表1&emsp;无人机位置设置</capital>
+
+<div align="center">
+    <p align="center">表1&emsp;无人机位置设置</p>
+    <table>
+        <tr>
+            <td align="center">无人机编号</td> 
+            <td align="center">初始坐标（km, km, m）</td> 
+            <td align="center">终点坐标（km, km, m）</td> 
+        </tr>
+        <tr>
+            <td align="center"><center>1</td>
+            <td align="center">(120,40,50)</td>
+            <td align="center">(100,80,50)</td>
+        </tr>
+    </table>
+</div>
+
+<div align="center">
+    <p align="center">表2&emsp;三威胁区坐标及半径设置</p>
         <table>
             <tr>
-                <td>无人机编号</td> 
-                <td>初始坐标（km, km, m）</td> 
-                <td>终点坐标（km, km, m）</td> 
+                <td align="center">威胁区编号</td> 
+                <td align="center">威胁区坐标（km,km）</td> 
+                <td align="center">威胁区半径/km</td> 
             </tr>
             <tr>
-                <td><center>1</center></td>
-                <td><center>(120,40,50)</center></td>
-                <td><center>(100,80,50)</center></td>
+                <td align="center">1</td>
+                <td align="center">(50,70)</td>
+                <td align="center">3</td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td align="center">(61,59)</td>
+                <td align="center">3</td>
+            </tr>
+            <tr>
+                <td align="center">3</td>
+                <td align="center">(60,100)</td>
+                <td align="center">3</td>
             </tr>
         </table>
-</center>
-<center>
-    <capital>表2&emsp;三威胁区坐标及半径设置</capital>
-        <table>
-            <tr>
-                <td>威胁区编号</td> 
-                <td>威胁区坐标（km,km）</td> 
-                <td>威胁区半径/km</td> 
-            </tr>
-            <tr>
-                <td><center>1</center></td>
-                <td><center>(50,70)</center></td>
-                <td><center>3</center></td>
-            </tr>
-            <tr>
-                <td><center>2</center></td>
-                <td><center>(61,59)</center></td>
-                <td><center>3</center></td>
-            </tr>
-            <tr>
-                <td><center>3</center></td>
-                <td><center>(60,100)</center></td>
-                <td><center>3</center></td>
-            </tr>
-        </table>
-</center>
+</div>
 
 &emsp;&emsp;单架无人机航迹规划仿真结果如图6所示，可以看出无人机以最短的安全航迹到达目标区域，没有经过威胁区，符合2节中提出的优化指标和约束条件。<br/>
-<center class = "half">
-    <img src="./pic/6a.png"width = “50%”/>
-    <img src="./pic/6b.png"width = “50%”/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图6&emsp;单无人机航迹图</div>
-</center>
+
+<p align="center">
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./pic/6a.png">
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./pic/6b.png">
+    <p align="center">图6&emsp;单无人机航迹图</p>
+</p>
 
 ### 4.2&emsp;案例2：五架无人机三个威胁区协同航迹规划
 &emsp;&emsp;五架无人机从初始位置，避过三个威胁区，同时到达目标点进行打击，各无人机初始位置及终端时刻坐标见表3，威胁区坐标见表2。无人机速度范围为 $[200,280]m/s$ 。<br/>
-<center>
-    <capital>表3&emsp;五无人机始末位置</capital>
-        <table>
-            <tr>
-                <td>无人机编号</td> 
-                <td>初始坐标（km, km, m）</td> 
-                <td>终点坐标（km, km, m）</td> 
-            </tr>
-            <tr>
-                <td><center>1</center></td>
-                <td><center>(10,40,50)</center></td>
-                <td><center>(101,79,50)</center></td>
-            </tr>
-            <tr>
-                <td><center>2</center></td>
-                <td><center>(10,60,50)</center></td>
-                <td><center>(100,79,50)</center></td>
-            </tr>
-            <tr>
-                <td><center>3</center></td>
-                <td><center>(10,80,50)</center></td>
-                <td><center>(100,80,50)</center></td>
-            </tr>
-            <tr>
-                <td><center>4</center></td>
-                <td><center>(10,100,50)</center></td>
-                <td><center>(100,81,50)</center></td>
-            </tr>
-            <tr>
-                <td><center>5</center></td>
-                <td><center>(10,120,50)</center></td>
-                <td><center>(101,81,50)</center></td>
-            </tr>
-        </table>
-</center>
+
+<div align="center">
+    <p align="center">表3&emsp;五无人机始末位置</p>
+    <table>
+        <tr>
+            <td align="center">无人机编号</td> 
+            <td align="center">初始坐标（km, km, m）</td> 
+            <td align="center">终点坐标（km, km, m）</td> 
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">(10,40,50)</td>
+            <td align="center">(101,79,50)</td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td align="center">(10,60,50)</td>
+            <td align="center">(100,79,50)</td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td align="center">(10,80,50)</td>
+            <td align="center">(100,80,50)</td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td align="center">(10,100,50)</td>
+            <td align="center">(100,81,50)</td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td align="center">(10,120,50)</td>
+            <td align="center">(101,81,50)</td>
+        </tr>
+    </table>
+</div>
 
 &emsp;&emsp;五架无人机的最优协同轨迹见图7所示，所求轨迹均未穿过威胁区，并且抵达目标点，满足约束条件。图7为3D轨迹视图，图8为俯视图。
-<center class = "half">
-    <img src="./pic/7.png"width = “50%”/>
-    <img src="./pic/8.png"width = “50%”/>
-    <br>
-    <font style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图7&emsp;五架无人机航迹3D视图</font>
-    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <font style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图8&emsp;航迹俯视图</font>
-</center>
+
+<p align="center">
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./pic/7.png">
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./pic/8.png">
+    <p align="center">图7&emsp;五架无人机航迹视图</p>
+</p>
 
 &emsp;&emsp;表4展示了无人机集群协同航迹规划信息。无人机的航迹长度并非完全为最优航迹，而是综合考虑了作战要求以及时空协同约束后的全局最优结果。通过规划出的协同时间区间，为每架无人机设置相应的飞行速度，从而实现无人机群在同一时刻或规定的时间段内同步到达目标区域。表5所示为给无人机分配的速度。<br/>
-<center>
-    <capital>表4&emsp;无人机集群航迹协同信息</capital>
+
+<div align="center">
+    <p align="center">表4&emsp;无人机集群航迹协同信息</p>
         <table>
             <tr>
-                <td>UAV</td> 
-                <td>最优航迹/km</td>
-                <td>最差航迹/km</td>
-                <td>到达时间区域/s</td>
-                <td>协同时间区域/s</td>
+                <td align="center">UAV</td> 
+                <td align="center">最优航迹/km</td>
+                <td align="center">最差航迹/km</td>
+                <td align="center">到达时间区域/s</td>
+                <td align="center">协同时间区域/s</td>
             </tr>
             <tr>
-                <td><center>1</center></td>
-                <td><center>101.48</center></td>
-                <td><center>106.29</center></td>
-                <td><center>[362.42, 531.45]</center></td>
-                <td rowspan="5">[392.15, 456.70]</td>
+                <td align="center">1</td>
+                <td align="center">101.48</td>
+                <td align="center">106.29</td>
+                <td align="center">[362.42, 531.45]</td>
+                <td align="center" rowspan="5">[392.15, 456.70]</td>
             </tr>
             <tr>
-                <td><center>2</center></td>
-                <td><center>92.38</center></td>
-                <td><center>93.54</center></td>
-                <td><center>[329.92, 467.70]</center></td>
+                <td align="center">2</td>
+                <td align="center">92.38</td>
+                <td align="center">93.54</td>
+                <td align="center">[329.92, 467.70]</td>
             </tr>
             <tr>
-                <td><center>3</center></td>
-                <td><center>90.11</center></td>
-                <td><center>91.34</center></td>
-                <td><center>[321.82, 456.70]</center></td>
+                <td align="center"><center>3</center></td>
+                <td align="center"><center>90.11</center></td>
+                <td align="center"><center>91.34</center></td>
+                <td align="center"><center>[321.82, 456.70]</center></td>
             </tr>
             <tr>
-                <td><center>4</center></td>
-                <td><center>93.35</center></td>
-                <td><center>95.71</center></td>
-                <td><center>[333.39, 478.55]</center></td>
+                <td align="center"><center>4</td>
+                <td align="center"><center>93.35</td>
+                <td align="center"><center>95.71</td>
+                <td align="center"><center>[333.39, 478.55]</td>
             </tr>
             <tr>
-                <td><center>5</center></td>
-                <td><center>109.80</center></td>
-                <td><center>116.52</center></td>
-                <td><center>[392.15, 582.60]</center></td>
+                <td align="center">5</td>
+                <td align="center">109.80</td>
+                <td align="center">116.52</td>
+                <td align="center">[392.15, 582.60]</td>
             </tr>
         </table>
-</center>
-<center>
-    <capital>表5&emsp;无人机集群速度分配</capital>
-        <table>
-            <tr>
-                <td>UAV</td> 
-                <td>航迹长度/km</td>
-                <td>到达时间/s</td>
-                <td>速度分配m/s</td>
-            </tr>
-            <tr>
-                <td><center>1</center></td>
-                <td><center>101.48</center></td>
-                <td rowspan="5">392.15</td>
-                <td><center>258.78</center></td>
-            </tr>
-            <tr>
-                <td><center>2</center></td>
-                <td><center>93.54</center></td>
-                <td><center>238.53</center></td>
-            </tr>
-            <tr>
-                <td><center>3</center></td>
-                <td><center>91.34</center></td>
-                <td><center>232.92</center></td>
-            </tr>
-            <tr>
-                <td><center>4</center></td>
-                <td><center>93.35</center></td>
-                <td><center>238.05</center></td>
-            </tr>
-            <tr>
-                <td><center>5</center></td>
-                <td><center>109.80</center></td>
-                <td><center>279.99</center></td>
-            </tr>
-        </table>
-</center>
+</div>
+<div align="center">
+    <p align="center">表5&emsp;无人机集群速度分配</p>
+    <table>
+        <tr>
+            <td align="center">UAV</td> 
+            <td align="center">航迹长度/km</td>
+            <td align="center">到达时间/s</td>
+            <td align="center">速度分配m/s</td>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">101.48</td>
+            <td align="center" rowspan="5">392.15</td>
+            <td align="center">258.78</td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td align="center">93.54</td>
+            <td align="center">238.53</td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td align="center">91.34</td>
+            <td align="center">232.92</td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td align="center">93.35</td>
+            <td align="center">238.05</td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td align="center">109.80</td>
+            <td align="center">279.99</td>
+        </tr>
+    </table>
+</div>
 
 ### 4.3 仿真分析
 &emsp;&emsp;通过动态粒子群算法对单架无人机三个威胁区进行了单轨迹仿真和五架无人机三个威胁区的协同航迹规划进行了仿真。结果表明，可以规划出无人机航迹并且成功避开威胁区，协同航迹能够同时到达目标区域对敌进行打击。<br/>
 &emsp;&emsp;同时，为了对比改进后的动态多种群粒子群优化算法的高效性，本文在相同种群大小和迭代次数的参数设置下，将改进后的算法与传统算法的迭代适应度变化进行对比分析，如图9所示。可以发现，改进后的粒子群优化算法收敛的适应度为885左右，而传统算法的收敛适应度为924。相比PSO算法，本文提出的IDM-PSO算法能够跳出局部最优解，寻找全局最优解，具有更好的收敛效果和收敛精度。<br/>
-<center>
+
+<p align="center">
     <img style="border-radius: 0.3125em;
-    box-shadow: 0 3px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="./pic/9.png">
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">图9&emsp;IDM-PSO与PSO迭代适应度变化图</div>
-</center>
+    <p align="center">图8&emsp;IDM-PSO与PSO迭代适应度变化图</p>
+</p>
 
 ## 5&emsp;小结
 &emsp;&emsp;本文建立了单无人机轨迹规划约束模型，设计了相应的目标函数，然后建立了时间和空间协同约束模型。随后，介绍了改进粒子群算法，设计了备选航迹组策略，以解决多无人机的时间协同问题，并给出了多机协同航迹规划解决方案的总体框架。最后，通过仿真验证单无人机航迹规划和多无人机协同航迹规划的结果。结果表明，该方法在满足时空协同约束的条件下，有效地解决了多机航迹规划问题。同时，相较于传统的PSO算法，本文所采用的IDM-PSO算法在收敛速度和解质量方面均展现出显著优势。
