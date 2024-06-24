@@ -1,12 +1,12 @@
 # 基于改进粒子群算法的多无人机协同航迹规划——Uav-track-collaborative-planning-based-on-pso-algorithm
 
 ---
-PSO_code文件夹里分三个文件夹<br/>
+使用matlab实现，PSO_code文件夹里分三个文件夹<br/>
 - PSO代码_多种群单轨迹：为带地形和威胁区，地图大小为[500m，500m，100m]的单架无人机航迹规划
 - PSO代码_时间协同：为带地形和威胁区，地图大小为[500m，500m，100m]的五架无人机的协同航迹规划
 - PSO代码_时间协同_协同突防场景：为带威胁区，地图大小为[200km，200km，1000m]的五架无人机的协同航迹规划
 
-PSO_code folder divided into three folders <br/>
+Implementation using matlab，PSO_code folder divided into three folders <br/>
 - PSO代码_多种群单轨迹: It is a single UAV track planning with terrain and threat area and map size [500m，500m，100m]
 - PSO代码_时间协同: Coordinated flight path planning for five UAVs with terrain and threat area and map size [500m，500m，100m]
 - PSO代码_时间协同_协同突防场景: Indicates the cooperative flight path planning of five UAVs with the threat area and a map size of [200km，200km，1000m]
