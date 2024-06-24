@@ -1,5 +1,17 @@
 # 基于改进粒子群算法的多无人机协同航迹规划——Uav-track-collaborative-planning-based-on-pso-algorithm
 
+---
+PSO_code文件夹里分三个文件夹<br/>
+- PSO代码_多种群单轨迹：为带地形和威胁区，地图大小为[500m，500m，100m]的单架无人机航迹规划
+- PSO代码_时间协同：为带地形和威胁区，地图大小为[500m，500m，100m]的五架无人机的协同航迹规划
+- PSO代码_时间协同_协同突防场景：为带威胁区，地图大小为[200km，200km，1000m]的五架无人机的协同航迹规划
+
+PSO_code folder divided into three folders <br/>
+- PSO代码_多种群单轨迹: It is a single UAV track planning with terrain and threat area and map size [500m，500m，100m]
+- PSO代码_时间协同: Coordinated flight path planning for five UAVs with terrain and threat area and map size [500m，500m，100m]
+- PSO代码_时间协同_协同突防场景: Indicates the cooperative flight path planning of five UAVs with the threat area and a map size of [200km，200km，1000m]
+---
+
 ## 1 引言
 
 &emsp;&emsp;在合理分配无人机集群的攻击目标后，需进行满足约束条件的无人机航迹规划，以实现对敌打击任务的顺利执行。无人机集群协同航迹规划通过规划集群的最优航迹，协调多种类型的多架无人机，在同一时刻到达目标，提高无人机的整体突防能力，实现饱和攻击。粒子群算法在适应性、可扩展性、全局寻优和并行处理等方面展现出了卓越的性能，因而被广泛应用于路径规划研究领域。本文采用改进粒子群算法对无人机集群协同航迹进行规划，最后通过仿真实验验证算法的可行性和有效性。
