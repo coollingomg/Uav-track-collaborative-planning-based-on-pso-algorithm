@@ -93,7 +93,7 @@ dim = 4;                    % 经过节点个数，路径的四个节点
 lenchrom = pointnum*dim;    % 位置向量的长度，即每个粒子的位置信息的总维度
 sizepop = 30;               % 粒子数量
 subsize = sizepop/3;        % 子族群粒子数量
-maxgen = 50;                % 迭代次数
+maxgen = 600;               % 迭代次数
 
 % 粒子速度界限
 Vmax = repmat([20,20,20],[1,dim]);
