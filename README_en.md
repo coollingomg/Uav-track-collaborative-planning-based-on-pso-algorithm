@@ -7,6 +7,7 @@
 
 ## 1. abstract
 &emsp;&emsp;By planning the optimal flight path of the cluster, multiple UAVs of various types can be coordinated to reach the target at the same time, so as to improve the overall penetration capability of UAVs and realize saturation attack. Particle swarm optimization (PSO) is widely used in path planning research because of its excellent performance in adaptability, scalability, global optimization and parallel processing. In this project, the improved particle swarm optimization algorithm is used to plan the cooperative flight path of UAV cluster. Finally, the feasibility and effectiveness of the algorithm are verified by simulation experiments. Dynamic particle swarm optimization (PSO) was used to simulate the three threat zones of a single UAV and the cooperative track planning of three threat zones of five UAVs. The results show that the UAV's flight path can be planned and successfully avoided the threat area, and the cooperative flight path can simultaneously reach the target area to strike the enemy.<br/>
+&emsp;&emsp;This is the patent we wrote [3], which has specific implementation principles, etc. Interested friends can download and read, and the link is in the fourth part of the reference.<br/>
 
 ## 2. Related work
 ### 2.1 File structure
@@ -48,4 +49,5 @@
 ## 4. reference
 [1] Uav 3D path planning based on improved particle swarm optimization algorithm：https://mp.weixin.qq.com/s/cCwPzWwMHF2FBHZJ3fmmtg<br/>
 [2] Research on cooperative target assignment and track planning of multiple UAVs：https://kns.cnki.net/kcms2/article/abstract?v=0-LBHIej7QkK55CbKPr5n2e0vq3JdYPJOg2r-rfaHeL6OcepVqSMU3CmVujbx-ln1SXAQT_xDcFkpgAqAzxFHEAcxugn36JH5p2AufjunIBeSFEI2uKLajzZ_IdA86MouqkV1Zo1N1k8Wjv6gltXVBPy-1ljc4YqHrSGZcvdkzFspDtO9slvu4Ops6KcRfM3&uniplatform=NZKPT&language=CHS<br/>
+[3] Autonomous decision making method of UAV group cooperative flight based on improved particle swarm optimization algorithm：https://kns.cnki.net/kcms2/article/abstract?v=-xbefZa1CdsCsbU6YYsDq7-t_zmQjDC8FWyiFJwZRWDc_4MUhhcgMirQSaNa5iocy0wReyIA5NPIkUTnI2FDdRZzSJtECqSZWN3uTpOkt1rMB_1DbRyOTeLDU8J_k9d3pLUx8j-LJ8Z86dNmx2RcqsoyqVUH04PdDPkZXYzLPbUuHdizIJgOjjjfIEg6PH0S&uniplatform=NZKPT&language=CHS<br/>
 

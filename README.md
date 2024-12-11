@@ -7,6 +7,7 @@
 
 ## 1. 摘要
 &emsp;&emsp;无人机集群协同航迹规划通过规划集群的最优航迹，协调多种类型的多架无人机，在同一时刻到达目标，提高无人机的整体突防能力，实现饱和攻击。粒子群算法在适应性、可扩展性、全局寻优和并行处理等方面展现出了卓越的性能，因而被广泛应用于路径规划研究领域。本项目采用改进粒子群算法对无人机集群协同航迹进行规划，最后通过仿真实验验证算法的可行性和有效性。 通过动态粒子群算法对单架无人机三个威胁区进行了单轨迹仿真和五架无人机三个威胁区的协同航迹规划进行了仿真。结果表明，可以规划出无人机航迹并且成功避开威胁区，协同航迹能够同时到达目标区域对敌进行打击。<br/>
+&emsp;&emsp;这是我们所撰写的专利[3]，里面有具体的实现原理等，感兴趣的朋友可以下载阅读，链接在第四部分参考里。<br/>
 
 ## 2. 相关工作
 ### 2.1 文件结构
@@ -48,4 +49,5 @@
 ## 4. 参考
 [1] 基于改进粒子群算法的无人机三维路径规划：https://mp.weixin.qq.com/s/cCwPzWwMHF2FBHZJ3fmmtg<br/>
 [2] 多无人机协同目标分配与航迹规划方法研究：https://kns.cnki.net/kcms2/article/abstract?v=0-LBHIej7QkK55CbKPr5n2e0vq3JdYPJOg2r-rfaHeL6OcepVqSMU3CmVujbx-ln1SXAQT_xDcFkpgAqAzxFHEAcxugn36JH5p2AufjunIBeSFEI2uKLajzZ_IdA86MouqkV1Zo1N1k8Wjv6gltXVBPy-1ljc4YqHrSGZcvdkzFspDtO9slvu4Ops6KcRfM3&uniplatform=NZKPT&language=CHS<br/>
+[3] 基于改进粒子群算法的无人机群协同飞行自主决策方法：https://kns.cnki.net/kcms2/article/abstract?v=-xbefZa1CdsCsbU6YYsDq7-t_zmQjDC8FWyiFJwZRWDc_4MUhhcgMirQSaNa5iocy0wReyIA5NPIkUTnI2FDdRZzSJtECqSZWN3uTpOkt1rMB_1DbRyOTeLDU8J_k9d3pLUx8j-LJ8Z86dNmx2RcqsoyqVUH04PdDPkZXYzLPbUuHdizIJgOjjjfIEg6PH0S&uniplatform=NZKPT&language=CHS<br/>
 
